@@ -28,7 +28,6 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build, tag, and push Docker image
-        working-directory: uc-10
         run: |
           docker build -t node-appointment:cicd ./uc-10/modules/microservices
           docker tag node-appointment:cicd 443180305490.dkr.ecr.us-east-1.amazonaws.com/node-appointment:cicd
