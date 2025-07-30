@@ -27,19 +27,12 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push Backend image
+      - name: Build, tag, and push Docker image
         working-directory: uc-10
         run: |
-          docker build -t $ECR_REPO_BACKEND:latest .
-          docker tag $ECR_REPO_BACKEND:latest ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_BACKEND}:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_BACKEND}:latest
-
-      - name: Build, tag, and push Frontend image
-        working-directory: .
-        run: |
-          docker build -t $ECR_REPO_FRONTEND:latest .
-          docker tag $ECR_REPO_FRONTEND:latest ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_FRONTEND}:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_FRONTEND}:latest
+          docker build -t node-appointment:cicd ./uc-10/modules/microservices
+          docker tag node-appointment:cicd 443180305490.dkr.ecr.us-east-1.amazonaws.com/node-appointment:cicd
+          docker push 443180305490.dkr.ecr.us-east-1.amazonaws.com/node-appointment:cicd
 
   terraform:
     needs: build-and-push
@@ -51,21 +44,18 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
-        working-directory: ./terraform
         run: terraform init
 
       - name: Terraform Plan
-        working-directory: ./terraform
-        run: terraform plan
+        run: terraform plan -var-file=terraform.tfvars
 
       - name: Terraform Apply
-        working-directory: ./terraform
-        if: github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve
