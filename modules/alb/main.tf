@@ -19,9 +19,9 @@ resource "aws_lb_listener_rule" "auth_rule" {
     type = "authenticate-cognito"
 
     authenticate_cognito {
-      user_pool_arn       = aws_cognito_user_pool.users.arn
-      user_pool_client_id = aws_cognito_user_pool_client.app_client.id
-      user_pool_domain    = aws_cognito_user_pool_domain.app_domain.domain
+      user_pool_arn       = var.cognito_user_pool_arn
+      user_pool_client_id = var.cognito_user_pool_client_id
+      user_pool_domain    = var.cognito_user_pool_domain
 
       on_unauthenticated_request = "authenticate"
       scope                      = "openid email"

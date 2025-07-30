@@ -4,6 +4,9 @@ module "alb" {
     public_subnets = module.vpc.public_subnet_ids
     vpc_id = module.vpc.vpc_id
     alb_sg_id = module.sg.alb_sg_id
+    cognito_user_pool_arn       = module.cognito.user_pool_arn
+    cognito_user_pool_client_id = module.cognito.user_pool_client_id
+    cognito_user_pool_domain    = module.cognito.user_pool_domain
 }
 
 module "ecr" {
@@ -56,4 +59,8 @@ module "sg" {
     alb_sg_name = var.alb_sg_name
     ecs_sg_name = var.ecs_sg_name
   
+}
+
+module "cognito" {
+    source = "./modules/cognito"
 }

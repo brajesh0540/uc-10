@@ -20,3 +20,16 @@ variable "name" {
     default     = "ecs-alb"
   
 }
+
+variable "cognito_user_pool_arn" {
+  type = string
+}
+
+variable "cognito_user_pool_client_id" {
+  type = string
+}
+
+variable "cognito_user_pool_domain" {
+  type = string
+}
+

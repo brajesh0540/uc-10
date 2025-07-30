@@ -1,14 +1,11 @@
-output "cognito_user_pool_id" {
-  description = "The User Pool ID"
-  value       = aws_cognito_user_pool.app_users.id
+output "user_pool_arn" {
+  value = aws_cognito_user_pool.app_users.arn
 }
 
-output "cognito_user_pool_client_id" {
-  description = "The User Pool Client ID"
-  value       = aws_cognito_user_pool_client.app_client.id
+output "user_pool_client_id" {
+  value = aws_cognito_user_pool_client.app_client.id
 }
 
-output "cognito_user_pool_domain" {
-  description = "The Cognito User Pool Domain"
-  value       = aws_cognito_user_pool_domain.app_domain.domain
+output "user_pool_domain" {
+  value = aws_cognito_user_pool_domain.app_domain.domain
 }
