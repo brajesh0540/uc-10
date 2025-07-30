@@ -6,7 +6,8 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: 443180305490.dkr.ecr.us-east-1.amazonaws.com/node-appointment
+  ECR_REPOSITORY_appointment: 443180305490.dkr.ecr.us-east-1.amazonaws.com/node-appointment
+  ECR_REPOSITORY_patient: 443180305490.dkr.ecr.us-east-1.amazonaws.com/node-patient
 
 jobs:
   build-and-push:
@@ -27,11 +28,17 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push Docker image
+      - name: Build and push appointment service image
         run: |
-          docker build -t node-appointment:cicd ./modules/microservices
+          docker build -t node-appointment:cicd ./modules/microservices/appointment
           docker tag node-appointment:cicd 443180305490.dkr.ecr.us-east-1.amazonaws.com/node-appointment:cicd
           docker push 443180305490.dkr.ecr.us-east-1.amazonaws.com/node-appointment:cicd
+
+      - name: Build and push patient service image
+        run: |
+          docker build -t node-atent:cicd ./modules/microservices/patient
+          docker tag node-appointment:cicd 443180305490.dkr.ecr.us-east-1.amazonaws.com/node-patient:cicd
+          docker push 443180305490.dkr.ecr.us-east-1.amazonaws.com/node-patient:cicd
 
   terraform:
     runs-on: ubuntu-latest
@@ -56,4 +63,4 @@ jobs:
         run: terraform plan -var-file=terraform.tfvars
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -var-file=terraform.tfvars

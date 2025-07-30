@@ -10,6 +10,40 @@ resource "aws_lb" "ecs_alb" {
     }
 }
 
+# === Listener Rule: Cognito Authentication ===
+resource "aws_lb_listener_rule" "auth_rule" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 1
+
+  action {
+    type = "authenticate-cognito"
+
+    authenticate_cognito {
+      user_pool_arn       = aws_cognito_user_pool.users.arn
+      user_pool_client_id = aws_cognito_user_pool_client.app_client.id
+      user_pool_domain    = aws_cognito_user_pool_domain.app_domain.domain
+
+      on_unauthenticated_request = "authenticate"
+      scope                      = "openid email"
+      session_cookie_name        = "AWSELBAuthSessionCookie"
+      # Optional session expiration time (seconds)
+      # session_timeout            = 86400
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.patients.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/*"]
+    }
+  }
+}
+
+
 
 
 resource "aws_lb_target_group" "patients" {
