@@ -1,22 +1,14 @@
-variable "public_subnets" {
-    description = "Public subnet for the ALB"
-    type        = list(string)
-}
-
-variable "vpc_id" {
-    description = "VPC ID where the ALB and target group will be created"
-    type        = string
+output "alb_dns_name" {
+  description = "The DNS name of the ALB"
+  value       = aws_lb.ecs_alb.dns_name
   
 }
 
-variable "alb_sg_id" {
-    description = "Security group ID for the ALB"
-    type        = string
+output "appointments_target_group_arn" {
+  description = "The ARN of the ALBb"
+  value       = aws_lb_target_group.appointments.arn
 }
 
-variable "name" {
-    description = "Name of the ALB and target group"
-    type        = string
-    default     = "ecs-alb"
-  
+output "patients_target_group_arn" {
+  value = aws_lb_target_group.patients.arn
 }
