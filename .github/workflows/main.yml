@@ -1,0 +1,70 @@
+name: Build & Deploy to AWS ECS
+
+on:
+  push:
+    branches: [main]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPO_BACKEND: hackprepare-backend
+  ECR_REPO_FRONTEND: hackprepare-frontend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push Backend image
+        working-directory: uc-10
+        run: |
+          docker build -t $ECR_REPO_BACKEND:latest .
+          docker tag $ECR_REPO_BACKEND:latest ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_BACKEND}:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_BACKEND}:latest
+
+      - name: Build, tag, and push Frontend image
+        working-directory: ./frontend
+        run: |
+          docker build -t $ECR_REPO_FRONTEND:latest .
+          docker tag $ECR_REPO_FRONTEND:latest ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_FRONTEND}:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_FRONTEND}:latest
+
+  terraform:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: ./terraform
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ./terraform
+        run: terraform plan
+
+      - name: Terraform Apply
+        working-directory: ./terraform
+        if: github.ref == 'refs/heads/main'
+        run: terraform apply -auto-approve
