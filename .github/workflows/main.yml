@@ -35,7 +35,7 @@ jobs:
           docker push ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_BACKEND}:latest
 
       - name: Build, tag, and push Frontend image
-        working-directory: ./frontend
+        working-directory: .
         run: |
           docker build -t $ECR_REPO_FRONTEND:latest .
           docker tag $ECR_REPO_FRONTEND:latest ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_FRONTEND}:latest

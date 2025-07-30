@@ -1,0 +1,10 @@
+vpc_cidr = "10.0.0.0/16"
+public_subnets = ["10.0.11.0/24", "10.0.12.0/24", "10.0.13.0/24"]
+private_subnets = ["10.0.21.0/24", "10.0.22.0/24", "10.0.23.0/24"]
+azs = ["us-east-1a", "us-east-1b", "us-east-1c"]
+ecr_repo_name = ["node-patient", "node-appointment"]
+alb_sg_name = "hopital-alb-sg"
+ecs_sg_name = "hopital-sg"
+vpc_name = "hopital-vpc"
+cluster_name = "node-js-app"
+execution_role_arn = "arn:aws:iam::443180305490:role/ecsTaskExecutionRole"

@@ -1,58 +1,93 @@
 resource "aws_vpc" "vpc" {
-  cidr_block = "10.0.0.0/16"
-
-  tags = {
-    Name = "hackprepare-vpc"
-  }
-}
-
-resource "aws_subnet" "private" {
-  count                   = 2
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = cidrsubnet(aws_vpc.main.cidr_block, 4, count.index)
-  availability_zone       = element(data.aws_availability_zones.available.names, count.index)
-  map_public_ip_on_launch = false
-
-  tags = {
-    Name = "hackprepare-private-subnet-${count.index}"
-  }
-}
-
-resource "aws_subnet" "public" {
-  count                   = 2
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = cidrsubnet(aws_vpc.main.cidr_block, 8, count.index)
-  availability_zone       = element(data.aws_availability_zones.available.names, count.index)
-  map_public_ip_on_launch = true
-
-  tags = {
-    Name = "hackprepare-public-subnet-${count.index}"
-  }
+    cidr_block = var.vpc_cidr
+    enable_dns_hostnames = true
+    enable_dns_support = true
+    tags = {
+        Name = "${var.vpc_name}"
+    }
 }
 
 resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.main.id
-
+  vpc_id = aws_vpc.vpc.id
   tags = {
-    Name = "hackprepare-igw"
+    Name = "${var.vpc_name}-igw"
+  }
+  
+}
+
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.eip_nat.id
+  subnet_id = aws_subnet.public_subnet[0].id
+  
+}
+
+resource "aws_eip" "eip_nat" {
+  tags = {
+    Name = "${var.vpc_name}-nat-eip"
   }
 }
 
-resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.main.id
 
+resource "aws_subnet" "public_subnet" {
+  count = length(var.public_subnets )
+  vpc_id = aws_vpc.vpc.id
+  cidr_block = var.public_subnets[count.index]
+  availability_zone = element(var.azs, count.index)
+  tags = {
+    Name = "${var.vpc_name}-public-${count.index}"
+  }
+  
+}
+
+resource "aws_subnet" "private_subnet" {
+  count = length(var.private_subnets)
+  vpc_id = aws_vpc.vpc.id
+  cidr_block = var.private_subnets[count.index]
+  availability_zone = element(var.azs, count.index)
+  tags = {
+    Name = "${var.vpc_name}-private-${count.index}"
+  }
+  
+}
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.vpc.id
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igw.id
   }
-
   tags = {
-    Name = "hackprepare-public-rt"
+    Name = "${var.vpc_name}-public-route-table"
   }
+  
 }
 
-resource "aws_route_table_association" "public_assoc" {
-  count          = length(aws_subnet.public)
-  subnet_id      = aws_subnet.public[count.index].id
+resource "aws_route_table" "private" {
+  vpc_id = aws_vpc.vpc.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat.id
+  }
+  tags = {
+    Name = "${var.vpc_name}-private-route-table"
+  }
+  
+}
+
+resource "aws_route_table_association" "public" {
+  count = length(aws_subnet.public_subnet)
+  subnet_id = aws_subnet.public_subnet[count.index].id
   route_table_id = aws_route_table.public.id
+  
+}
+
+resource "aws_route_table_association" "private" {
+  count = length(aws_subnet.private_subnet)
+  subnet_id = aws_subnet.private_subnet[count.index].id
+  route_table_id = aws_route_table.private.id
+  
+}
+
+data "aws_availability_zones" "available" {
+  state = "available"
 }
