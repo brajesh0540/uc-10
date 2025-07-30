@@ -6,8 +6,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPO_BACKEND: hackprepare-backend
-  ECR_REPO_FRONTEND: hackprepare-frontend
+  ECR_REPOSITORY: 443180305490.dkr.ecr.us-east-1.amazonaws.com/node-appointment
 
 jobs:
   build-and-push:
