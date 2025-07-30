@@ -10,6 +10,7 @@ env:
 
 jobs:
   build-and-push:
+    needs: terraform
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -33,7 +34,6 @@ jobs:
           docker push 443180305490.dkr.ecr.us-east-1.amazonaws.com/node-appointment:cicd
 
   terraform:
-    needs: build-and-push
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
