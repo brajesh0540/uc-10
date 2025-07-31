@@ -7,7 +7,7 @@ module "alb" {
     cognito_user_pool_arn       = module.cognito.user_pool_arn
     cognito_user_pool_client_id = module.cognito.user_pool_client_id
     cognito_user_pool_domain    = module.cognito.user_pool_domain
-    cognito_user_pool_client_secret = module.cognito.client_secret
+    #cognito_user_pool_client_secret = module.cognito.client_secret
 }
 
 module "ecr" {
