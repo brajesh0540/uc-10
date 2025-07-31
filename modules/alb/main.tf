@@ -12,7 +12,7 @@ resource "aws_lb" "ecs_alb" {
 
 # === Listener Rule: Cognito Authentication ===
 resource "aws_lb_listener_rule" "auth_rule" {
-  listener_arn = aws_lb_listener.http.arn
+  listener_arn = aws_lb_listener.https.arn
   priority     = 1
 
   action {
@@ -38,7 +38,7 @@ resource "aws_lb_listener_rule" "auth_rule" {
 
   condition {
     path_pattern {
-      values = ["/*"]
+      values = ["/auth/*"]
     }
   }
 }
@@ -85,8 +85,10 @@ resource "aws_lb_target_group" "appointments" {
 
 resource "aws_lb_listener" "http" {
     load_balancer_arn = aws_lb.ecs_alb.arn
-    port              = 80
-    protocol          = "HTTP"
+    port              = 443
+    protocol          = "HTTPS"
+    ssl_policy        = "ELBSecurityPolicy-2016-08"
+    certificate_arn   = var.acm_certificate_arn
 
     default_action {
         type             = "fixed-response"

@@ -39,3 +39,7 @@ variable "cognito_user_pool_client_secret" {
   description = "NOT REQUIRED: For ALB Cognito auth, client secret is handled internally when client is created with generate_secret=true."
 }
 
+variable "acm_certificate_arn" {
+  type = string
+  
+}
