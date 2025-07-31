@@ -1,3 +1,10 @@
+resource "aws_route53_zone" "primary" {
+  name = var.domain_name
+  # other options if any
+}
+
+
+
 resource "aws_acm_certificate" "cert" {
   domain_name       = var.domain_name                  # e.g., "auth.example.com"
   validation_method = "DNS"
@@ -13,11 +20,6 @@ resource "aws_acm_certificate" "cert" {
   lifecycle {
     create_before_destroy = true
   }
-}
-
-resource "aws_acm_certificate_validation" "cert_validation" {
-  certificate_arn         = aws_acm_certificate.cert.arn
-  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
 }
 
 resource "aws_route53_record" "cert_validation" {
@@ -36,6 +38,14 @@ resource "aws_route53_record" "cert_validation" {
   ttl     = 60
 }
 
+resource "aws_acm_certificate_validation" "cert_validation" {
+  certificate_arn         = aws_acm_certificate.cert.arn
+  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
+  depends_on = [aws_route53_record.cert_validation]
+}
+
+
+
 resource "aws_route53_record" "alb_dns" {
   zone_id = aws_route53_zone.primary.zone_id
   name    = var.domain_name  # e.g., "auth.example.com"
@@ -48,8 +58,5 @@ resource "aws_route53_record" "alb_dns" {
   }
 }
 
-resource "aws_route53_zone" "primary" {
-  name = var.domain_name
-  # other options if any
-}
+
 

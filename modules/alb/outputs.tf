@@ -12,3 +12,7 @@ output "appointments_target_group_arn" {
 output "patients_target_group_arn" {
   value = aws_lb_target_group.patients.arn
 }
+
+output "alb_zone_id" {
+  value = aws_lb.ecs_alb.zone_id
+}
