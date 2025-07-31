@@ -22,7 +22,7 @@ resource "aws_lb_listener_rule" "auth_rule" {
       user_pool_arn       = var.cognito_user_pool_arn
       user_pool_client_id = var.cognito_user_pool_client_id
       user_pool_domain    = var.cognito_user_pool_domain
-
+      
       on_unauthenticated_request = "authenticate"
       scope                      = "openid email"
       session_cookie_name        = "AWSELBAuthSessionCookie"
@@ -33,7 +33,7 @@ resource "aws_lb_listener_rule" "auth_rule" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.patients.arn
+    target_group_arn = aws_lb_target_group.appointments.arn
   }
 
   condition {

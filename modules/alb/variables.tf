@@ -33,3 +33,8 @@ variable "cognito_user_pool_domain" {
   type = string
 }
 
+variable "cognito_user_pool_client_secret" {
+  type = string
+  sensitive = true
+}
+

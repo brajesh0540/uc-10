@@ -38,7 +38,7 @@ resource "aws_cognito_user_pool_client" "app_client" {
   name         = "hackprepare-web-client"
   user_pool_id = aws_cognito_user_pool.app_users.id
 
-  generate_secret                = false # Use "true" for confidential clients
+  generate_secret                = true # Use "true" for confidential clients
   explicit_auth_flows            = [
     "ALLOW_USER_PASSWORD_AUTH",
     "ALLOW_REFRESH_TOKEN_AUTH",
