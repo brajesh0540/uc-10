@@ -7,12 +7,17 @@ resource "aws_acm_certificate" "cert" {
   ]
 
   tags = {
-    Name = "example-acm-cert"
+    Name = "my-acm-cert"
   }
 
   lifecycle {
     create_before_destroy = true
   }
+}
+
+resource "aws_route53_zone" "primary" {
+  name = var.domain_name
+  # other options if any
 }
 
 resource "aws_route53_record" "cert_validation" {
@@ -24,7 +29,7 @@ resource "aws_route53_record" "cert_validation" {
     }
   }
 
-  zone_id = var.route53_zone_id  # Your Route53 hosted zone ID
+  zone_id = aws_route53_zone.primary.zone_id  # Your Route53 hosted zone ID
   name    = each.value.name
   type    = each.value.type
   records = [each.value.record]
@@ -37,7 +42,7 @@ resource "aws_acm_certificate_validation" "cert_validation" {
 }
 
 resource "aws_route53_record" "alb_dns" {
-  zone_id = var.route53_zone_id
+  zone_id = vaws_route53_zone.primary.zone_id
   name    = var.domain_name  # e.g., "auth.example.com"
   type    = "A"
 

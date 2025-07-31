@@ -70,5 +70,5 @@ module "cognito" {
 module "acm" {
     source = "./modules/acm"
     domain_name = var.domain_name
-    route53_zone_id = var.route53_zone_id
+    route53_zone_id = aws_route53_zone.primary.zone_id
 }
