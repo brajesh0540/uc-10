@@ -76,5 +76,8 @@ module "acm" {
 module "route53" {
     source      = "./modules/route53"       # Adjust path as needed
     domain_name = var.domain_name
+    hosted_zone_id  = module.route53.hosted_zone_id
+    alb_dns_name    = module.alb.alb_dns_name
+    alb_zone_id     = module.alb.alb_zone_id
 
 }
