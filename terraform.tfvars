@@ -8,3 +8,4 @@ ecs_sg_name = "hopital-sg"
 vpc_name = "hopital-vpc"
 cluster_name = "node-js-app"
 execution_role_arn = "arn:aws:iam::443180305490:role/ecsTaskExecutionRole"
+domain_name =  https://hackprepare-auth-example.auth.us-east-1.amazoncognito.com
