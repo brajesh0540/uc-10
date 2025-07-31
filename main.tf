@@ -71,6 +71,7 @@ module "cognito" {
 module "acm" {
     source = "./modules/acm"
     domain_name = var.domain_name
+    route53_zone_id = module.route53.hosted_zone_id
 }
 
 module "route53" {

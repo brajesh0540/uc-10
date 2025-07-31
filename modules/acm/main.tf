@@ -28,7 +28,7 @@ resource "aws_route53_record" "cert_validation" {
     }
   }
 
-  zone_id = aws_route53_zone.primary.zone_id  # Your Route53 hosted zone ID
+  zone_id = var.route53_zone_id  # Your Route53 hosted zone ID
   name    = each.value.name
   type    = each.value.type
   records = [each.value.record]
