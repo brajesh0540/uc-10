@@ -60,7 +60,7 @@ jobs:
         run: terraform init
 
       - name: Terraform statelist
-        run: terraform state list | grep cognito_user_pool_client
+        run: terraform state rm module.cognito.aws_cognito_user_pool_client.app_client
 
       - name: Terraform Plan
         run: terraform plan -var-file=terraform.tfvars
