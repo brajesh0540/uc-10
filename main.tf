@@ -8,6 +8,7 @@ module "alb" {
     cognito_user_pool_client_id = module.cognito.user_pool_client_id
     cognito_user_pool_domain    = module.cognito.user_pool_domain
     acm_certificate_arn = module.acm.acm_certificate_arn
+    
     #cognito_user_pool_client_secret = module.cognito.client_secret
 }
 
@@ -70,4 +71,11 @@ module "cognito" {
 module "acm" {
     source = "./modules/acm"
     domain_name = var.domain_name
+    route53_zone_id = module.route53.hosted_zone_id
+}
+
+module "route53" {
+    source      = "./modules/route53"       # Adjust path as needed
+    domain_name = var.domain_name
+
 }

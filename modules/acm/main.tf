@@ -1,7 +1,4 @@
-resource "aws_route53_zone" "primary" {
-  name = var.domain_name
-  # other options if any
-}
+
 
 
 
@@ -43,20 +40,3 @@ resource "aws_acm_certificate_validation" "cert_validation" {
   validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
   depends_on = [aws_route53_record.cert_validation]
 }
-
-
-
-resource "aws_route53_record" "alb_dns" {
-  zone_id = aws_route53_zone.primary.zone_id
-  name    = var.domain_name  # e.g., "auth.example.com"
-  type    = "A"
-
-  alias {
-    name                   = aws_lb.ecs_alb.dns_name
-    zone_id                = aws_lb.alb.alb_zone_id
-    evaluate_target_health = true
-  }
-}
-
-
-
