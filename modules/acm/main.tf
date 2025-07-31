@@ -42,7 +42,7 @@ resource "aws_acm_certificate_validation" "cert_validation" {
 }
 
 resource "aws_route53_record" "alb_dns" {
-  zone_id = vaws_route53_zone.primary.zone_id
+  zone_id = aws_route53_zone.primary.zone_id
   name    = var.domain_name  # e.g., "auth.example.com"
   type    = "A"
 
