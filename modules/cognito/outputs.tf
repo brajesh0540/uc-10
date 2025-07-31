@@ -9,3 +9,8 @@ output "user_pool_client_id" {
 output "user_pool_domain" {
   value = aws_cognito_user_pool_domain.app_domain.domain
 }
+
+output "client_secret" {
+  value     = aws_cognito_user_pool_client.this.client_secret
+  sensitive = true
+}
