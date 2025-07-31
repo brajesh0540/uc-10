@@ -8,6 +8,6 @@ output "alb_url" {
 
 output "alb_dns_name" {
   description = "The DNS name of the ALB"
-  value       = aws_lb.ecs_alb.dns_name
+  value = var.alb_dns_name
   
 }
