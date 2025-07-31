@@ -1,13 +1,13 @@
 module "alb" {
     source = "./modules/alb"
     name = "ecs-alb"
-    acm_certificate_arn = aws_acm_certificate.cert.arn
     public_subnets = module.vpc.public_subnet_ids
     vpc_id = module.vpc.vpc_id
     alb_sg_id = module.sg.alb_sg_id
     cognito_user_pool_arn       = module.cognito.user_pool_arn
     cognito_user_pool_client_id = module.cognito.user_pool_client_id
     cognito_user_pool_domain    = module.cognito.user_pool_domain
+    acm_certificate_arn = module.acm.acm_certificate_arn
     #cognito_user_pool_client_secret = module.cognito.client_secret
 }
 
@@ -65,4 +65,10 @@ module "sg" {
 
 module "cognito" {
     source = "./modules/cognito"
+}
+
+module "acm" {
+    source = "./modules/acm"
+    domain_name = var.domain_name
+    route53_zone_id = var.route53_zone_id
 }
